@@ -1,4 +1,3 @@
-///要能用 mouse 來移動，同時要解決存讀檔的問題
 #include <stdio.h>///要檔案的Input/Output
 #include <GL/glut.h>
 float teapotX=0,teapotY=0;
