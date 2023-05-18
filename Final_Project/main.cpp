@@ -4,99 +4,91 @@
 GLMmodel * head = NULL;
 GLMmodel * body = NULL;
 GLMmodel * uparmR = NULL;
-GLMmodel * uparmL = NULL;
 GLMmodel * lowarmR = NULL;
-GLMmodel * lowarmL = NULL;
-GLMmodel * uplegR = NULL;
-GLMmodel * uplegL = NULL;
-GLMmodel * lowlegR = NULL;
-GLMmodel * lowlegL = NULL;
-int show[10] = {0,1,2,3,4,5,6,7,8,9};
-void keyboard(unsigned char key,int x,int y){
-    if(key=='0') show[0] = !show[0];
-    if(key=='1') show[1] = !show[1];
-    if(key=='2') show[2] = !show[2];
-    if(key=='3') show[3] = !show[3];
-    if(key=='4') show[4] = !show[4];
-    if(key=='5') show[5] = !show[5];
-    if(key=='6') show[6] = !show[6];
-    if(key=='7') show[7] = !show[7];
-    if(key=='8') show[8] = !show[8];
-    if(key=='9') show[9] = !show[9];
+int show[4] = {1, 1, 1, 1}; ///用 show[i] 來決定要不要顯示
+int ID = 0; ///0:頭 1身體 2上手臂 3下手臂
+void keyboard(unsigned char key, int x, int y){
+    if(key=='0') ID = 0; ///week14_step02-2
+    if(key=='1') ID = 1; ///week14_step02-2
+    if(key=='2') ID = 2; ///week14_step02-2
+    if(key=='3') ID = 3; ///week14_step02-2
+    //if(key=='0') show[0] = !show[0];/// week13 step03-1
+    //if(key=='1') show[1] = !show[1];/// week13 step03-1
+    //if(key=='2') show[2] = !show[2];/// week13 step03-1
+    //if(key=='3') show[3] = !show[3];/// week13 step03-1
     glutPostRedisplay();
-}
-float teapotX=0,teapotY=0;
-FILE * fout = NULL; ///step02-1
-FILE * fin = NULL; ///step02-1
+}   ///原來的keyboard先註解、不要用
+FILE * fout = NULL;     ///一開始檔案沒有開, NULL
+FILE * fin = NULL;      ///要讀檔用的指標一開始也是 NULL
+float teapotX=0, teapotY=0;         ///看移動值
+float angle=0, angle2=0, angle3=0;  ///擺動作
 void display()
+
 {
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
     glPushMatrix();
-    glScalef(0.2,0.2,0.2);
-    if(head==NULL){
-        body=glmReadOBJ("model/body.obj");
-        head=glmReadOBJ("model/head.obj");
-        lowarmR=glmReadOBJ("model/lowarmR.obj");
-        lowarmL=glmReadOBJ("model/lowarmL.obj");
-        uparmL=glmReadOBJ("model/uparmL.obj");
-        uparmR=glmReadOBJ("model/uparmR.obj");
-        lowlegL=glmReadOBJ("model/lowlegL.obj");
-        lowlegR=glmReadOBJ("model/lowlegR.obj");
-        uplegL=glmReadOBJ("model/uplegL.obj");
-        uplegR=glmReadOBJ("model/uplegR.obj");
+        glScalef(0.3, 0.3, 0.3);
+        if(body==NULL){
+            head = glmReadOBJ("model/head.obj");
+            body = glmReadOBJ("model/body.obj");
+            uparmR = glmReadOBJ("model/uparmR.obj");
+            lowarmR = glmReadOBJ("model/lowarmR.obj");
+            ///glmUnitize(body);
         }
-        if(show[0]) glmDraw(head, GLM_MATERIAL);
-        if(show[1]) glmDraw(body, GLM_MATERIAL);
-        if(show[2]) glmDraw(lowarmR, GLM_MATERIAL);
-        if(show[3]) glmDraw(lowarmL, GLM_MATERIAL);
-        if(show[4]) glmDraw(uparmL, GLM_MATERIAL);
-        if(show[5]) glmDraw(uparmR, GLM_MATERIAL);
-        if(show[6]) glmDraw(uplegR, GLM_MATERIAL);
-        if(show[7]) glmDraw(uplegL, GLM_MATERIAL);
-        if(show[8]) glmDraw(lowlegR, GLM_MATERIAL);
-        if(show[9]) glmDraw(lowlegL, GLM_MATERIAL);
+        if(ID==0) glColor3f(1,0,0);     ///選定的,設紅色
+        else glColor3f(1,1,1);          ///沒選定,設白色
+        if(show[0]) glmDraw(head, GLM_MATERIAL);///Week13 step03-1
 
+        if(ID==1) glColor3f(1,0,0);     ///選定的,設紅色
+        else glColor3f(1,1,1);          ///沒選定,設白色
+        if(show[1]) glmDraw(body, GLM_MATERIAL);
         glPushMatrix();
-            glTranslatef(teapotX,teapotY,0);
-            if(show[0]) glmDraw(head,GLM_MATERIAL);
+            glTranslatef(-1.200000, +0.453333, 0); ///反過來
+            glRotatef(angle, 0, 0, 1);
+            glTranslatef(1.200000, -0.453333, 0);
+
+            if(ID==2) glColor3f(1,0,0); ///選定的,設紅色
+            else glColor3f(1,1,1);      ///沒選定,設白色
+            if(show[2]) glmDraw(uparmR, GLM_MATERIAL);
+            glPushMatrix();
+                glTranslatef(-1.959999, +0.113333, 0);
+                glRotatef(angle, 0, 0, 1);
+                glTranslatef(1.959999, -0.113333, 0);
+
+            if(ID==3) glColor3f(1,0,0); ///選定的,設紅色
+            else glColor3f(1,1,1);      ///沒選定,設白色
+            if(show[3]) glmDraw(lowarmR, GLM_MATERIAL);
+            glPopMatrix();
         glPopMatrix();
-        if(show[1]) glmDraw(body,GLM_MATERIAL);
-        if(show[2]) glmDraw(uparmL,GLM_MATERIAL);
-        if(show[3]) glmDraw(lowarmL,GLM_MATERIAL);
-        glPopMatrix();
-        glutSwapBuffers();
+    glPopMatrix();
+    glColor3f(0, 1, 0);     ///放個小茶壼在正中心當成參考點
+    glutSolidTeapot( 0.02 );///放個小茶壼在正中心當成參考點
+    glutSwapBuffers();
 }
-int oldX=0, oldY=0;
-void mouse(int button,int state,int x,int y)
-{
-    if(state==GLUT_DOWN){///�p�Gmouse���U�h
-      oldX=x;
-      oldY=y;
-    }
-}
-void motion(int x,int y){
-    teapotX += (x-oldX)/150.0;
-    teapotY += (y-oldY)/150.0;
+int oldX = 0, oldY = 0; ///Week13 step03-2
+void motion(int x, int y){
+    teapotX += (x - oldX)/150.0;
+    teapotY -= (y - oldY)/150.0;
     oldX = x;
     oldY = y;
+    printf("glTranslatef(%f, %f, 0);\n", teapotX, teapotY);
     glutPostRedisplay();
 }
-/* void keyboard(unsigned char key, int x,int y)
-{
-    if(fin==NULL){
-        fclose(fout);
-        fin = fopen("file4.txt","r");
+void mouse(int button, int state, int x, int y){
+    if(state==GLUT_DOWN){
+        oldX = x;
+        oldY = y;
+        angle = x;
     }
-    fscanf(fout,"%f%f",&teapotX,&teapotY);
     display();
-} */
-int main(int argc, char**argv)
-{
-    glutInit( &argc, argv );
+}
+int main(int argc, char** argv){
+    glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
-    glutCreateWindow("week13");
+    glutCreateWindow("week14");
     glutDisplayFunc(display);
-    glutKeyboardFunc(keyboard);
     glutMouseFunc(mouse);
+    glutMotionFunc(motion);
+    glutKeyboardFunc(keyboard); ///keyboard開檔、讀檔
     glutMainLoop();
 }
