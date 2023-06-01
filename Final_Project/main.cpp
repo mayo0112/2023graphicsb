@@ -1,94 +1,111 @@
-#include <stdio.h>
+#include <stdio.h>///­nÀÉ®×ªºInput/Output
 #include <GL/glut.h>
-#include "glm.h"
+#include "glm.h"///¦A§âglm.cpp ¦b¥ªÃä Add files ¥[¶i¥h
 GLMmodel * head = NULL;
 GLMmodel * body = NULL;
 GLMmodel * uparmR = NULL;
 GLMmodel * lowarmR = NULL;
-int show[4] = {1, 1, 1, 1}; ///ç”¨ show[i] ä¾†æ±ºå®šè¦ä¸è¦é¡¯ç¤º
-int ID = 0; ///0:é ­ 1èº«é«” 2ä¸Šæ‰‹è‡‚ 3ä¸‹æ‰‹è‡‚
-void keyboard(unsigned char key, int x, int y){
-    if(key=='0') ID = 0; ///week14_step02-2
-    if(key=='1') ID = 1; ///week14_step02-2
-    if(key=='2') ID = 2; ///week14_step02-2
-    if(key=='3') ID = 3; ///week14_step02-2
-    //if(key=='0') show[0] = !show[0];/// week13 step03-1
-    //if(key=='1') show[1] = !show[1];/// week13 step03-1
-    //if(key=='2') show[2] = !show[2];/// week13 step03-1
-    //if(key=='3') show[3] = !show[3];/// week13 step03-1
-    glutPostRedisplay();
-}   ///åŸä¾†çš„keyboardå…ˆè¨»è§£ã€ä¸è¦ç”¨
-FILE * fout = NULL;     ///ä¸€é–‹å§‹æª”æ¡ˆæ²’æœ‰é–‹, NULL
-FILE * fin = NULL;      ///è¦è®€æª”ç”¨çš„æŒ‡æ¨™ä¸€é–‹å§‹ä¹Ÿæ˜¯ NULL
-float teapotX=0, teapotY=0;         ///çœ‹ç§»å‹•å€¼
-float angle=0, angle2=0, angle3=0;  ///æ“ºå‹•ä½œ
-void display()
 
+int show[4] = {1,1,1,1};///week14_step03-1 ³£¨q¥X¨Ó
+int ID = 3;///week14_step03-1 ³]©wÃö¸` ID 0:ÀY 1:¨­Åé 2:¤W¤âÁu 3:¤U¤âÁu
+float teapotX=0,teapotY=0;
+float angle[20]={};///Week15-3_step03-1
+///float angle=0, angle2=0, angle3=0;///week14_step03-2
+FILE * fout = NULL;
+FILE * fin = NULL;
+
+void keyboard(unsigned char key,int x,int y)
+{
+    if(key=='0') ID = 0; ///week14_step03-1 ///show[0] = ! show[0];
+    if(key=='1') ID = 1; ///week14_step03-1 ///show[1] = ! show[1];
+    if(key=='2') ID = 2; ///week14_step03-1 ///show[2] = ! show[2];
+    if(key=='3') ID = 3; ///week14_step03-1 ///show[3] = ! show[3];
+    glutPostRedisplay();
+}
+void display()
 {
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+    if(head==NULL)
+    {
+        head = glmReadOBJ("model/head.obj");
+        body = glmReadOBJ("model/body.obj");
+        uparmR = glmReadOBJ("model/uparmR.obj");
+        lowarmR = glmReadOBJ("model/lowarmR.obj");
+        ///glmUnitize(head);
+    }
     glPushMatrix();
-        glScalef(0.3, 0.3, 0.3);
-        if(body==NULL){
-            head = glmReadOBJ("model/head.obj");
-            body = glmReadOBJ("model/body.obj");
-            uparmR = glmReadOBJ("model/uparmR.obj");
-            lowarmR = glmReadOBJ("model/lowarmR.obj");
-            ///glmUnitize(body);
-        }
-        if(ID==0) glColor3f(1,0,0);     ///é¸å®šçš„,è¨­ç´…è‰²
-        else glColor3f(1,1,1);          ///æ²’é¸å®š,è¨­ç™½è‰²
-        if(show[0]) glmDraw(head, GLM_MATERIAL);///Week13 step03-1
-
-        if(ID==1) glColor3f(1,0,0);     ///é¸å®šçš„,è¨­ç´…è‰²
-        else glColor3f(1,1,1);          ///æ²’é¸å®š,è¨­ç™½è‰²
-        if(show[1]) glmDraw(body, GLM_MATERIAL);
+        glScalef(0.3,0.3,0.3);
         glPushMatrix();
-            glTranslatef(-1.200000, +0.453333, 0); ///åéä¾†
-            glRotatef(angle, 0, 0, 1);
-            glTranslatef(1.200000, -0.453333, 0);
+            ///glTranslatef(teapotX,teapotY,0);
 
-            if(ID==2) glColor3f(1,0,0); ///é¸å®šçš„,è¨­ç´…è‰²
-            else glColor3f(1,1,1);      ///æ²’é¸å®š,è¨­ç™½è‰²
-            if(show[2]) glmDraw(uparmR, GLM_MATERIAL);
-            glPushMatrix();
-                glTranslatef(-1.959999, +0.113333, 0);
-                glRotatef(angle, 0, 0, 1);
-                glTranslatef(1.959999, -0.113333, 0);
-
-            if(ID==3) glColor3f(1,0,0); ///é¸å®šçš„,è¨­ç´…è‰²
-            else glColor3f(1,1,1);      ///æ²’é¸å®š,è¨­ç™½è‰²
-            if(show[3]) glmDraw(lowarmR, GLM_MATERIAL);
-            glPopMatrix();
+            if(ID==0) glColor3f(1,0,0); ///week14_step03-1 ¬õ¦â
+            else glColor3f(1,1,1); ///week14_step03-1 ¥Õ¦â
+            if(show[0]) glmDraw(head,GLM_MATERIAL);
         glPopMatrix();
+
+        if(ID==1) glColor3f(1,0,0); ///week14_step03-1 ¬õ¦â
+        else glColor3f(1,1,1); ///week14_step03-1 ¥Õ¦â
+        if(show[1]) glmDraw(body,GLM_MATERIAL);
+
+        glPushMatrix(); ///week14_step03_2
+            ///glTranslatef(teapotX, teapotY, 0); ///week14_step03_2 ­n³]©w TRT
+            glTranslatef(-1.360000, +0.360000, 0); ///week14_step03_2
+            glRotatef(angle[2], 0, 0, 1); ///week14_step03_2
+            glTranslatef(1.360000, -0.360000, 0); ///week14_step03_2
+
+            if(ID==2) glColor3f(1,0,0); ///week14_step03-1 ¬õ¦â
+            else glColor3f(1,1,1); ///week14_step03-1 ¥Õ¦â
+            if(show[2]) glmDraw(uparmR,GLM_MATERIAL);
+
+            glPushMatrix();  ///week14_step03_2
+                ///glTranslatef(teapotX, teapotY, 0); ///week14_step03_2 ­n³]©w TRT
+                glTranslatef(-1.959999, +0.080000, 0);
+                glRotatef(angle[3], 0, 0, 1);
+                glTranslatef(1.959999, -0.080000, 0);
+
+                if(ID==3) glColor3f(1,0,0); ///week14_step03-1 ¬õ¦â
+                else glColor3f(1,1,1); ///week14_step03-1 ¥Õ¦â
+                if(show[3]) glmDraw(lowarmR,GLM_MATERIAL);
+
+            glPopMatrix();  ///week14_step03_2
+
+        glPopMatrix(); ///week14_step03_2
+
     glPopMatrix();
-    glColor3f(0, 1, 0);     ///æ”¾å€‹å°èŒ¶å£¼åœ¨æ­£ä¸­å¿ƒç•¶æˆåƒè€ƒé»
-    glutSolidTeapot( 0.02 );///æ”¾å€‹å°èŒ¶å£¼åœ¨æ­£ä¸­å¿ƒç•¶æˆåƒè€ƒé»
+
+    glColor3f(0,1,0);///week14_step03_2 ºñ¦âªº
+    glutSolidTeapot(0.02);///³]¤p¯ù³ı§@¬°¤¤¤ßÂI
     glutSwapBuffers();
 }
-int oldX = 0, oldY = 0; ///Week13 step03-2
-void motion(int x, int y){
-    teapotX += (x - oldX)/150.0;
-    teapotY -= (y - oldY)/150.0;
-    oldX = x;
-    oldY = y;
-    printf("glTranslatef(%f, %f, 0);\n", teapotX, teapotY);
-    glutPostRedisplay();
-}
-void mouse(int button, int state, int x, int y){
-    if(state==GLUT_DOWN){
+int oldX=0, oldY=0;
+void mouse(int button,int state,int x,int y)
+{
+    if(state==GLUT_DOWN)
+    {
         oldX = x;
         oldY = y;
-        angle = x;
     }
-    display();
 }
-int main(int argc, char** argv){
-    glutInit(&argc, argv);
+void motion(int x,int y)
+{
+    teapotX += (x - oldX)/150.0*3;
+    teapotY -= (y - oldY)/150.0*3;
+    printf("glTranslatef(%f, %f, 0);\n", teapotX, teapotY); ///week14_step03_2
+    angle[ID] += x-oldX; ///week15_step3-1
+    oldX = x;
+    oldY = y;
+    glutPostRedisplay();
+}
+int main(int argc, char**argv)
+{
+    glutInit( &argc, argv );
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
     glutCreateWindow("week14");
-    glutDisplayFunc(display);
-    glutMouseFunc(mouse);
+
     glutMotionFunc(motion);
-    glutKeyboardFunc(keyboard); ///keyboardé–‹æª”ã€è®€æª”
+    glutDisplayFunc(display);
+    glutKeyboardFunc(keyboard);
+    glutMouseFunc(mouse);
+
     glutMainLoop();
 }
